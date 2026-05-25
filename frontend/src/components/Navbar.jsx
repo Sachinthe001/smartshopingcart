@@ -2,7 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
-import { FiShoppingCart, FiUser, FiLogOut, FiSettings } from 'react-icons/fi';
+import { FiShoppingCart, FiUser, FiLogOut, FiSettings, FiKey } from 'react-icons/fi';
+import axios from 'axios';
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -12,6 +13,24 @@ const Navbar = () => {
     const handleLogout = () => {
         logout();
         navigate('/login');
+    };
+
+    const handleRegisterPasskey = async () => {
+        try {
+            const res = await axios.post('http://localhost:5000/api/auth/passkey/register-options');
+            const options = res.data;
+
+            const { startRegistration } = await import('@simplewebauthn/browser');
+            const regResponse = await startRegistration({ optionsJSON: options });
+
+            const verifyRes = await axios.post('http://localhost:5000/api/auth/passkey/register-verify', regResponse);
+            if (verifyRes.data?.verified) {
+                alert('Passkey registered successfully! You can now log in using this Passkey.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert(err.response?.data?.message || err.message || 'Failed to register passkey');
+        }
     };
 
     const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
@@ -42,15 +61,23 @@ const Navbar = () => {
                                     )}
                                 </Link>
 
-                                <div className="flex items-center gap-2 border-l pl-4 ml-2 border-gray-200">
+                                <div className="flex items-center gap-3 border-l pl-4 ml-2 border-gray-200">
                                     <span className="text-sm font-medium text-gray-700 flex items-center gap-1">
                                         <FiUser /> {user.name}
                                     </span>
                                     <button 
+                                        onClick={handleRegisterPasskey}
+                                        className="text-gray-500 hover:text-emerald-600 transition flex items-center gap-1 text-sm"
+                                        title="Register Passkey"
+                                    >
+                                        <FiKey className="w-4 h-4" />
+                                    </button>
+                                    <button 
                                         onClick={handleLogout}
                                         className="text-gray-500 hover:text-rose-600 transition flex items-center gap-1 text-sm"
+                                        title="Logout"
                                     >
-                                        <FiLogOut />
+                                        <FiLogOut className="w-4 h-4" />
                                     </button>
                                 </div>
                             </>
