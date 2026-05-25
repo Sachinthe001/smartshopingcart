@@ -44,6 +44,39 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const loginWithGoogle = async (credential, isMock = false) => {
+        const res = await axios.post('http://localhost:5000/api/auth/google', { credential, isMock });
+        setUser(res.data);
+        if (res.data?.token) {
+            localStorage.setItem('token', res.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+        }
+    };
+
+    const loginWithFacebook = async (accessToken, isMock = false) => {
+        const res = await axios.post('http://localhost:5000/api/auth/facebook', { accessToken, isMock });
+        setUser(res.data);
+        if (res.data?.token) {
+            localStorage.setItem('token', res.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+        }
+    };
+
+    const loginWithPasskey = async (email) => {
+        const optionsRes = await axios.post('http://localhost:5000/api/auth/passkey/login-options', { email });
+        const options = optionsRes.data;
+
+        const { startAuthentication } = await import('@simplewebauthn/browser');
+        const authResponse = await startAuthentication({ optionsJSON: options });
+
+        const verifyRes = await axios.post('http://localhost:5000/api/auth/passkey/login-verify', authResponse);
+        setUser(verifyRes.data);
+        if (verifyRes.data?.token) {
+            localStorage.setItem('token', verifyRes.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${verifyRes.data.token}`;
+        }
+    };
+
     const register = async (name, email, password) => {
         const res = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
         setUser(res.data);
@@ -66,7 +99,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, register, logout, loading, loginWithGoogle, loginWithFacebook, loginWithPasskey }}>
             {children}
         </AuthContext.Provider>
     );
