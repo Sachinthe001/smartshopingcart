@@ -1,0 +1,18 @@
+# Dependency directories
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Local environment variables (Contains database passwords!)
+.env
+backend/.env
+
+# Build outputs
+frontend/dist/
+
+# System / IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
