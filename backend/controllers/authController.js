@@ -103,11 +103,9 @@ exports.googleLogin = async (req, res) => {
         let email, name;
         const hasRealGoogleConfig = process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'your_google_client_id';
         if (!hasRealGoogleConfig || isMock) {
-            // Development fallback — no real credentials configured
             email = 'google.user@example.com';
             name = 'Google User';
         } else {
-            // Real Google: use access_token to call Google UserInfo API
             const googleRes = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${credential}`);
             if (!googleRes.ok) {
                 return res.status(401).json({ message: 'Invalid Google token' });
@@ -141,11 +139,9 @@ exports.facebookLogin = async (req, res) => {
 
         let email, name;
         if (isMock || !process.env.FACEBOOK_APP_ID || process.env.FACEBOOK_APP_ID === 'your_facebook_app_id') {
-            // Simulated fallback
             email = 'facebook.user@example.com';
             name = 'Facebook User';
         } else {
-            // Real Facebook token verification via Graph API
             const response = await fetch(`https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`);
             if (!response.ok) {
                 throw new Error('Failed to verify Facebook token');

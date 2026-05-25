@@ -217,15 +217,13 @@ const Login = () => {
                 <div className="relative flex justify-center text-sm">
                     <span className="px-2 bg-white text-gray-500">Or continue with</span>
                 </div>
-            </div>
-
             <div className="grid grid-cols-3 gap-3">
                 {/* Google Button */}
                 <button
                     onClick={handleGoogleLogin}
                     disabled={loadingProvider !== null}
                     className="flex justify-center items-center gap-2 p-3 border border-gray-300 rounded-xl hover:bg-gray-50 hover:border-red-300 transition font-medium text-gray-700 disabled:opacity-60"
-                    title={googleConfigured ? 'Sign in with Google' : 'Google login (demo mode)'}
+                    title="Sign in with Google"
                 >
                     {loadingProvider === 'google' ? (
                         <span className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
@@ -233,7 +231,7 @@ const Login = () => {
                         <FaGoogle className="text-red-500 w-5 h-5" />
                     )}
                     <span className="text-sm hidden sm:inline">
-                        Google{!googleConfigured && <span className="text-xs text-gray-400 ml-1">(demo)</span>}
+                        Google
                     </span>
                 </button>
 
@@ -242,7 +240,7 @@ const Login = () => {
                     onClick={handleFacebookLogin}
                     disabled={loadingProvider !== null}
                     className="flex justify-center items-center gap-2 p-3 border border-gray-300 rounded-xl hover:bg-gray-50 hover:border-blue-300 transition font-medium text-gray-700 disabled:opacity-60"
-                    title={facebookConfigured ? 'Sign in with Facebook' : 'Facebook login (demo mode)'}
+                    title="Sign in with Facebook"
                 >
                     {loadingProvider === 'facebook' ? (
                         <span className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
@@ -250,7 +248,7 @@ const Login = () => {
                         <FaFacebook className="text-blue-600 w-5 h-5" />
                     )}
                     <span className="text-sm hidden sm:inline">
-                        Facebook{!facebookConfigured && <span className="text-xs text-gray-400 ml-1">(demo)</span>}
+                        Facebook
                     </span>
                 </button>
 
@@ -269,13 +267,6 @@ const Login = () => {
                     <span className="text-sm hidden sm:inline">Passkey</span>
                 </button>
             </div>
-
-            {/* Show note if social credentials are not set up yet */}
-            {(!googleConfigured || !facebookConfigured) && (
-                <p className="text-xs text-gray-400 text-center mt-3">
-                    Google/Facebook show as <em>demo</em> until real credentials are added to <code className="font-mono">.env</code>.
-                </p>
-            )}
 
             <p className="mt-6 text-center text-gray-600">
                 Don't have an account?{' '}
